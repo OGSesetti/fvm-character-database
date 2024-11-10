@@ -2,6 +2,22 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
+const character = require('./models/characterSchema')
+const port = 8081;
+
+require('dotenv').config();
+//console.log(process.env);
+
+const uri = 'mongodb://localhost:27017/characters';
+mongoose.connect(uri)
+    .then(() => console.log('Connection to database successful'))
+    .catch((error) => console.error('Cannot connect to database', error));
+
+app.use(express.json());
+
+
+
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -9,6 +25,27 @@ app.use(express.json());
 
 const listFilePath = path.join(__dirname, 'data', 'guestlist.json');
 const guestBookPageFilePath = path.join(__dirname, 'public', 'pages', 'guestbook.html');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function listParser(html, list){
@@ -159,7 +196,7 @@ app.post('/ajaxmessage', function(req, res){
     });
     });
 
-const port = 8081;
+
 app.listen(port, () =>{
     console.log('Server running on http://localhost:', port);
 });
