@@ -1,0 +1,60 @@
+
+body {
+    background-color: rgb(30, 30, 30);
+    color: rgb(255, 255, 255);
+    padding: 20px;
+}
+
+body h1 {
+    font-size: 100px;
+    color: rgb(255, 255, 255);
+}
+body p {
+    color: white;
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px rgb(255, 255, 255);
+}
+
+#messageForm {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px rgb(165, 165, 165);
+    border-radius: 5px;
+    background-color: rgb(30, 30, 30);
+}
+
+#submitButton, #ajaxSubmitButton {
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    background-color: white;
+    color: rgb(30, 30, 30)
+}
+
+.pure-u-1 a {
+    text-decoration: none;
+}
+
+.nav-button{
+    background-color: rgb 255, 255, 255;
+    color: rgb(30, 30, 30);
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    margin: 0 5px;
+}

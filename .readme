@@ -1,0 +1,5 @@
+ota /guestbook variableen
+lue lista
+lisää form html 
+parsee json 
+res send
