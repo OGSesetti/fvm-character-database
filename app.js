@@ -3,72 +3,111 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const character = require('./models/characterSchema')
+const Character = require('./models/characterSchema') //Character isolla
 const port = 8081;
-
+const { MongoClient } = require("mongodb");
 require('dotenv').config();
-//console.log(process.env);
 
-const uri = 'mongodb://localhost:27017/characters';
-mongoose.connect(uri)
-    .then(() => console.log('Connection to database successful'))
-    .catch((error) => console.error('Cannot connect to database', error));
+//Password is stored in a .env file
+const password = process.env.password;
+
+
+if (Character){
+    console.log('Importing of Character schema succesfull;', Character);
+}
+else{
+    console.log('Failed to import Character schema')
+}
+//console.log('Password:', password);
+
+const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
+const uri = `mongodb+srv://ses:${password}@foodvman.zocy6.mongodb.net/?retryWrites=true&w=majority&appName=foodvman`;
+let db;
 
 app.use(express.json());
-
-
-
-
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 const listFilePath = path.join(__dirname, 'data', 'guestlist.json');
-const guestBookPageFilePath = path.join(__dirname, 'public', 'pages', 'guestbook.html');
+const characterPageFilePath = path.join(__dirname, 'public', 'pages', 'characters.html');
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function listParser(html, list){
-   
-    try {
-        guests = JSON.parse(list);
-
-    } catch (parseErr) {
-        console.error('Cannot parse data:', parseErr);
-        return res.status(500).send('Invalid JSON format');
+//Database stays connected until the program closes
+async function connectToDatabase() {
+    if (!db){
+        try{
+            await mongoose.connect(uri, clientOptions)
+            await mongoose.connection.db.admin().command({ ping: 1 });
+            console.log("Connection to database successfull.");
+            db = 'foodvman';
         }
-    
-    guests.forEach(guest =>{
-        html = html.replace('<!-- guestlist -->', `<tr>
-        <td>${guest.username}</td>
-        <td>${guest.country}</td>
-        <td>${guest.message}</td>
-        <td>${guest.timestamp}</td>
-        </tr><!-- guestlist -->`);
-    });
-    return(html);
-};
+        catch(error){
+            console.error('Error connecting to database.')
 
+        }       
+    }
+}
+
+/*Temporary attempt at creating the database
+async function createFirstItem(){
+    try{
+        const newCharacter = new Character({name: 'Dirk Tendick'}); //Character isolla!!!
+        saveCharacter(newCharacter);
+
+    } catch(error){'Failed to create first item', error}
+
+} */
+
+
+async function saveCharacter(newCharacter) {
+    //console.log('Attempting to save character to database:', newCharacter);
+    try{
+        await newCharacter.save();
+        console.log('Character added', newCharacter);
+        }
+        catch(error){
+            console.error('Failed to save character to database:', error);
+        }
+}
+
+
+//Possibly redundant. Check later.
+async function disconnectFromDatabase() {
+    await mongoose.disconnect();
+    console.log('Process over. Disconnected from database.');
+}
+
+//Get all character information into one variable.
+async function getAll(){
+    try{
+    const allCharacters = await Character.find();
+    console.log('All characters:', allCharacters);
+    return(allCharacters);
+}   catch(error) {
+    console.error('Error retrieving character data:', error);
+}
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+//.catch(console.dir);
+connectToDatabase();
+//getAll();
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+//Automatically disconnects database when program closes.
+process.on('SIGINT', async () => {
+    await mongoose.disconnect();
+    console.log("SIGINT detected. Database disconnected. Exiting.");
+    process.exit(0);
+})
 
 
 
@@ -79,24 +118,12 @@ app.get('/', function(req, res){
 
 
 
-app.get('/guestbook', function(req, res){
-
-    fs.readFile(listFilePath, 'utf8', (err,data)=>{
-        if (err) {
-            console.error('Cannot read file:', err);
-            return res.status(500).send('Server error');
-        }
-        fs.readFile(guestBookPageFilePath, 'utf8', (err,page)=>{
-            if (err) {
-                console.error('Cannot read file:', err);
-                return res.status(500).send('Server error');
-            }
-    html = listParser(page, data);
-    res.send(html);
-});
-});   
+app.get('/characters', function(req, res){
+    characterList = getAll();
 });  
 
+
+// Not in use. Going to get repurposed later
 app.get('/newmessage', function(req, res){
 
     fs.readFile(listFilePath, 'utf8', (err,data)=>{
@@ -105,7 +132,7 @@ app.get('/newmessage', function(req, res){
             return res.status(500).send('Server error');
         }
 
-    fs.readFile(guestBookPageFilePath, 'utf8', (err,page)=>{
+    fs.readFile(characterPageFilePath, 'utf8', (err,page)=>{
         if (err) {
             console.error('Cannot read HTML-file:', err);
             return res.status(500).send('Server error');
@@ -135,66 +162,6 @@ app.get('/newmessage', function(req, res){
 });
 });
 });
-
-app.post('/newmessage', function(req, res){
-  
-    const newMessage = {
-        username: req.body.username,
-        country: req.body.country,
-        message: req.body.message,
-        timestamp: new Date().toISOString()
-    };
-
-    fs.readFile(listFilePath, 'utf8', (err, data) => {
-        if (err){
-            console.error('Tiedoston lukeminen epäonnistui:', err);
-            return res.status(500).send('Tiedoston lukeminen epäonnistui.');
-        };
-
-        const guests = JSON.parse(data);
-        guests.push(newMessage);
-        
-        fs.writeFile(listFilePath, JSON.stringify(guests, null, 2), (err) => {
-            if (err) {
-                console.error('Tiedostoon kirjoittaminen epäonnistui:', err);
-                return res.status(500).send('Tiedostoon kirjoittaminen epäonnistui.');
-            };
-            res.redirect('/guestbook');
-        });
-
-    });
-
-});
-
-
-app.post('/ajaxmessage', function(req, res){
-
-    const newMessage = {
-        username: req.body.username,
-        country: req.body.country,
-        message: req.body.message,
-        timestamp: new Date().toISOString()
-    };
-
-    fs.readFile(listFilePath, 'utf8', (err, data) => {
-        if (err){
-            console.error('Error reading file:', err);
-            return res.status(500).send('Error reading file.');
-        };
-
-        const guests = JSON.parse(data);
-        guests.push(newMessage);
-
-        fs.writeFile(listFilePath, JSON.stringify(guests, null, 2), (err) => {
-            if (err) {
-                console.error('Writing failed:', err);
-                return res.status(500).json('Writing failed.');
-            }
-
-            res.status(200).json({ message: 'Message added successfully', guests: guests });
-        });
-    });
-    });
 
 
 app.listen(port, () =>{
