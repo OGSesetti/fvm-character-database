@@ -3,7 +3,4 @@ document.addEventListener('DOMContentLoaded', function(){
     const messagesDiv = document.getElementById('messages')
     console.log('toimii')
 
-
-
-
-})
+});

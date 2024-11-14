@@ -102,14 +102,12 @@ async function disconnectFromDatabase() {
     console.log('Process over. Disconnected from database.');
 }
 
-//Get all characters into JSON in alphabetic order.
+//Not in use. Originally meant it for the front-end, but I will leave that for project 3
 async function getAll(){
     try{
         const allCharacters = await Character.find().sort({name:1});
         console.log('All characters:', allCharacters);
-        return allCharacters;
-        //res.json(allCharacters);
-//json mutta samalla pitäisi returnata? muuta.
+        res.json(allCharacters);
 }   catch(error) {
         console.error('Error retrieving character data:', error);
         return [];
@@ -159,102 +157,81 @@ app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, 'public', 'pages', 'index.html'));
 });
 
-
-//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
-
-app.get('/characters', function(req, res){
-    characterList = getAll();
+app.get('/characters', async (req, res) => {
+    characterList = getAll(); //not in use
     res.send(characterPageFilePath);
 
 });
 
-app.get('/api/character/getall', function(req,res){
-    console.log('jee');
-    allCharacters = getAll();
-    res.json(allCharacters);
+//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
+
+//get all
+app.get('/api/character/getall', async (req,res)=>{
+    try{
+        const allCharacters = await Character.find().sort({name:1});
+        console.log('All characters:', allCharacters);
+        res.json(allCharacters);
+}   catch(error) {
+        res.json({error: "Server error:", details: error.message});
+}
 });
 
-app.get('/api/character/:id', function(req,res){
-    console.log('jee');
+//get selected character
+app.get('/api/character/:id', async (req,res) =>{
+    try{
+        const character = await Character.findById(req.params.id);
+        if (!character){
+            return res.json({error: "Character not found:", details: error.message});
+            }
+            res.json(character);
+}
+    catch (error){
+        res.json({error: "Server error:", details: error.message});
+    }
 });
 
-app.post('/api/character/add', function(req,res){
-    console.log('jee');
+//add new character
+app.post('/api/character/add', async (req,res)=>{
+    try{
+        const newCharacter = new Character(req.body);
+        await newCharacter.save();
+        res.json({status: "New character added", character: newCharacter});
+}   catch (error){
+    console.error("Server error:", error);
+    res.json({error: "Server error:", details: error.message});
+} 
 });
 
-app.put('/api/character/update/:id', function(req,res){
-    console.log('jee');
+//update character information
+app.put('/api/character/update/:id', async (req,res)=>{
+    try{
+        const selectedCharacter = await Character.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        if (!selectedCharacter) {
+            return res.json({status: "Character was not found in the database"});
+    }
+    res.json({status: "Character updated"});
+} catch (error){
+    res.json({error: "Server error:", details: error.message});
+    }
 });
 
-app.post('/api/character/add', function(req,res){
-    console.log('jee');
+//delete character
+app.delete('/api/character/delete/:id', async (req,res)=>{
+    try {
+        const selectedCharacter = await Character.findByIdAndDelete(req.params.id); //ehkä isolla??
+        if (!selectedCharacter) {
+            return res.json({status: "Character was not found in the database"})
+        }
+        res.json({status: "Character deleted"});
+    }catch (error){
+        res.json({error: "Server error:", error});
+    }
 });
 
 
 //API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Not in use. Going to get repurposed later
-app.get('/newmessage', function(req, res){
-
-    fs.readFile(listFilePath, 'utf8', (err,data)=>{
-        if (err) {
-            console.error('Cannot read file:', err);
-            return res.status(500).send('Server error');
-        }
-
-    fs.readFile(characterPageFilePath, 'utf8', (err,page)=>{
-        if (err) {
-            console.error('Cannot read HTML-file:', err);
-            return res.status(500).send('Server error');
-        }
-
-    let html = listParser(page, data);
-
-    let form = `
-        <form id="messageForm" action = "newmessage" method="POST" class="pure-form pure-form-stacked">
-        <label for ="username">Username:</label>
-        <input type = "text" name = "username" id="username" required>
-
-        <label for ="country">Country:</label>
-        <input type = "text" name = "country" id="country" required>
-
-        <label for ="message">Message:</label>
-        <input type = "text" name = "message" id="message" required>
-
-        <button type ="submit" id="submitButton" class ="pure-button-primary">Submit</button>
-        <button type ="button" id="ajaxSubmitButton" class = "pure-button-secondary">Submit with a cool AJAX-call</button>
-        </form>
-        `;
-
-        html = html.replace('<!-- form placement -->', form);
-        res.send(html);
-
-});
-});
-});
-*/
 
 app.listen(port, () =>{
     console.log('Server running on http://localhost:', port);
