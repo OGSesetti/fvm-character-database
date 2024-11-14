@@ -1,3 +1,10 @@
+/*
+This code is only for the character database so far.
+/character opens the page and /characterAPI is for the HTTP requests
+Connecting and disconnecting the database should be automatic
+
+*/
+
 const express = require('express');
 const app = express();
 const fs = require('fs');
@@ -8,12 +15,14 @@ const port = 8081;
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
 
+var adminRights = false;
+
 //Password is stored in a .env file
 const password = process.env.password;
 
 
 if (Character){
-    console.log('Importing of Character schema succesfull;', Character);
+    console.log('Importing of Character schema successful:', Character);
 }
 else{
     console.log('Failed to import Character schema')
@@ -22,31 +31,41 @@ else{
 
 const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
 const uri = `mongodb+srv://ses:${password}@foodvman.zocy6.mongodb.net/?retryWrites=true&w=majority&appName=foodvman`;
+const guestUri = `mongodb+srv://guest:guest@foodvman.zocy6.mongodb.net/?retryWrites=true&w=majority&appName=foodvman`; //read only
 let db;
 
 app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-const listFilePath = path.join(__dirname, 'data', 'guestlist.json');
+const listFilePath = path.join(__dirname, 'data', 'guestlist.json'); //obsolete
 const characterPageFilePath = path.join(__dirname, 'public', 'pages', 'characters.html');
 
 
 //Database stays connected until the program closes
 async function connectToDatabase() {
     if (!db){
-        try{
-            await mongoose.connect(uri, clientOptions)
-            await mongoose.connection.db.admin().command({ ping: 1 });
-            console.log("Connection to database successfull.");
-            db = 'foodvman';
-        }
-        catch(error){
-            console.error('Error connecting to database.')
+        if (password){
+            try{
+                await mongoose.connect(uri, clientOptions)
+                await mongoose.connection.db.admin().command({ ping: 1 });
+                console.log("Password found. Connected to database as admin");
+                adminRights = true;
+            }
+            catch(error){
+                console.error('Error connecting to database')
+        }}
+        else {
+            console.log('Password from .env file missing. Logging in as guest')
+            try{
+                await mongoose.connect(guestUri, clientOptions)
+                await mongoose.connection.db.admin().command({ ping: 1 });
+                console.log("Connected to database as guest");
+            }
+            catch(error){
+                console.error('Error connecting to database:', error);
 
-        }       
-    }
-}
+}}}}
 
 /*Temporary attempt at creating the database
 async function createFirstItem(){
@@ -61,13 +80,19 @@ async function createFirstItem(){
 
 async function saveCharacter(newCharacter) {
     //console.log('Attempting to save character to database:', newCharacter);
-    try{
-        await newCharacter.save();
-        console.log('Character added', newCharacter);
-        }
-        catch(error){
-            console.error('Failed to save character to database:', error);
-        }
+    if (adminRights){
+        try{
+            await newCharacter.save();
+            console.log('Character added', newCharacter);
+            }
+            catch(error){
+                console.error('Failed to save character to database:', error);
+            }}
+    else {
+        console.error('Cannot edit data as guest')
+
+    }
+    
 }
 
 
@@ -77,19 +102,24 @@ async function disconnectFromDatabase() {
     console.log('Process over. Disconnected from database.');
 }
 
-//Get all character information into one variable.
+//Get all characters into JSON in alphabetic order.
 async function getAll(){
     try{
-    const allCharacters = await Character.find();
-    console.log('All characters:', allCharacters);
-    return(allCharacters);
+        const allCharacters = await Character.find().sort({name:1});
+        console.log('All characters:', allCharacters);
+        return allCharacters;
+        //res.json(allCharacters);
+//json mutta samalla pitäisi returnata? muuta.
 }   catch(error) {
-    console.error('Error retrieving character data:', error);
+        console.error('Error retrieving character data:', error);
+        return [];
 }
-}
+};
 
 
-///////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //.catch(console.dir);
 connectToDatabase();
@@ -99,7 +129,6 @@ connectToDatabase();
 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////
 
 
 //Automatically disconnects database when program closes.
@@ -110,6 +139,20 @@ process.on('SIGINT', async () => {
 })
 
 
+function createCharacterList(characters){
+    let htmlList = '';
+    characters.forEach(character =>{
+        htmlList += `<li>${character.name}</li>`
+    })
+
+}
+
+async function updateCharacterPage(){
+//    const htmlPath = path.join(__dirname, 'public', 'characters.html')
+    const characters = await getAll();
+    const characterList = createCharacterList(characters);
+    const updatedHtml = html.replace('<!-- character-list -->', `<ul>${characterList}</ul>`);
+};
 
 
 app.get('/', function(req, res){
@@ -117,13 +160,62 @@ app.get('/', function(req, res){
 });
 
 
+//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
 
 app.get('/characters', function(req, res){
     characterList = getAll();
-});  
+    res.send(characterPageFilePath);
+
+});
+
+app.get('/api/character/getall', function(req,res){
+    console.log('jee');
+    allCharacters = getAll();
+    res.json(allCharacters);
+});
+
+app.get('/api/character/:id', function(req,res){
+    console.log('jee');
+});
+
+app.post('/api/character/add', function(req,res){
+    console.log('jee');
+});
+
+app.put('/api/character/update/:id', function(req,res){
+    console.log('jee');
+});
+
+app.post('/api/character/add', function(req,res){
+    console.log('jee');
+});
 
 
-// Not in use. Going to get repurposed later
+//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Not in use. Going to get repurposed later
 app.get('/newmessage', function(req, res){
 
     fs.readFile(listFilePath, 'utf8', (err,data)=>{
@@ -162,7 +254,7 @@ app.get('/newmessage', function(req, res){
 });
 });
 });
-
+*/
 
 app.listen(port, () =>{
     console.log('Server running on http://localhost:', port);
