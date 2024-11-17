@@ -35,7 +35,7 @@ const guestUri = `mongodb+srv://guest:guest@foodvman.zocy6.mongodb.net/?retryWri
 let db;
 
 app.use(express.json());
-app.use(express.static(__dirname, 'public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
 const listFilePath = path.join(__dirname, 'data', 'guestlist.json'); //obsolete
