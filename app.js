@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 const Character = require('./models/characterSchema') //Character isolla
-const port = 8081;
+const port = 3000;
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
 
