@@ -10,7 +10,7 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const Character = require('./models/characterSchema') //Character isolla
+const Character = require('../models/characterSchema') //Character isolla
 const port = 3000;
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
@@ -233,6 +233,9 @@ app.delete('/api/character/delete/:id', async (req,res)=>{
 
 
 
-app.listen(port, () =>{
+/*app.listen(port, () =>{
     console.log('Server running on http://localhost:', port);
 });
+*/
+
+module.exports = app;
