@@ -77,7 +77,7 @@ async function createFirstItem(){
 
 } */
 
-
+//right now useless
 async function saveCharacter(newCharacter) {
     //console.log('Attempting to save character to database:', newCharacter);
     if (adminRights){
@@ -136,7 +136,7 @@ process.on('SIGINT', async () => {
     process.exit(0);
 })
 
-
+//possible stuff for the future front end
 function createCharacterList(characters){
     let htmlList = '';
     characters.forEach(character =>{
@@ -144,7 +144,7 @@ function createCharacterList(characters){
     })
 
 }
-
+//possible stuff for the future front end
 async function updateCharacterPage(){
 //    const htmlPath = path.join(__dirname, 'public', 'characters.html')
     const characters = await getAll();
@@ -152,7 +152,7 @@ async function updateCharacterPage(){
     const updatedHtml = html.replace('<!-- character-list -->', `<ul>${characterList}</ul>`);
 };
 
-
+//pages don't work right now because of the fundamental changes to the project
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, 'public', 'pages', 'index.html'));
 });
