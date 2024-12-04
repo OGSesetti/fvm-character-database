@@ -10,14 +10,13 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const Character = require('./models/characterSchema') //Character isolla
+const Character = require('../models/characterSchema') //Character isolla
 const port = 3000;
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
 
 var adminRights = false;
 
-//Password is stored in a .env file
 const password = process.env.password;
 
 
@@ -35,14 +34,11 @@ const guestUri = `mongodb+srv://guest:guest@foodvman.zocy6.mongodb.net/?retryWri
 let db;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-const listFilePath = path.join(__dirname, 'data', 'guestlist.json'); //obsolete
-const characterPageFilePath = path.join(__dirname, 'public', 'pages', 'characters.html');
-
-
-//Database stays connected until the program closes
+//Server searches for .env file. If one is found, it attempts login as admin
+//API key system would probably also be worth doing
 async function connectToDatabase() {
     if (!db){
         if (password){
@@ -67,67 +63,7 @@ async function connectToDatabase() {
 
 }}}}
 
-/*Temporary attempt at creating the database
-async function createFirstItem(){
-    try{
-        const newCharacter = new Character({name: 'Dirk Tendick'}); //Character isolla!!!
-        saveCharacter(newCharacter);
-
-    } catch(error){'Failed to create first item', error}
-
-} */
-
-//right now useless
-async function saveCharacter(newCharacter) {
-    //console.log('Attempting to save character to database:', newCharacter);
-    if (adminRights){
-        try{
-            await newCharacter.save();
-            console.log('Character added', newCharacter);
-            }
-            catch(error){
-                console.error('Failed to save character to database:', error);
-            }}
-    else {
-        console.error('Cannot edit data as guest')
-
-    }
-    
-}
-
-
-//Possibly redundant. Check later.
-async function disconnectFromDatabase() {
-    await mongoose.disconnect();
-    console.log('Process over. Disconnected from database.');
-}
-
-//Not in use. Originally meant it for the front-end, but I will leave that for project 3
-async function getAll(){
-    try{
-        const allCharacters = await Character.find().sort({name:1});
-        console.log('All characters:', allCharacters);
-        res.json(allCharacters);
-}   catch(error) {
-        console.error('Error retrieving character data:', error);
-        return [];
-}
-};
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//.catch(console.dir);
 connectToDatabase();
-//getAll();
-
-
-
-
-
-
 
 //Automatically disconnects database when program closes.
 process.on('SIGINT', async () => {
@@ -135,33 +71,6 @@ process.on('SIGINT', async () => {
     console.log("SIGINT detected. Database disconnected. Exiting.");
     process.exit(0);
 })
-
-//possible stuff for the future front end
-function createCharacterList(characters){
-    let htmlList = '';
-    characters.forEach(character =>{
-        htmlList += `<li>${character.name}</li>`
-    })
-
-}
-//possible stuff for the future front end
-async function updateCharacterPage(){
-//    const htmlPath = path.join(__dirname, 'public', 'characters.html')
-    const characters = await getAll();
-    const characterList = createCharacterList(characters);
-    const updatedHtml = html.replace('<!-- character-list -->', `<ul>${characterList}</ul>`);
-};
-
-//pages don't work right now because of the fundamental changes to the project
-app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, 'public', 'pages', 'index.html'));
-});
-
-app.get('/characters', async (req, res) => {
-    characterList = getAll(); //not in use
-    res.send(characterPageFilePath);
-
-});
 
 //API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
 
