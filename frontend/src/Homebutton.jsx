@@ -1,9 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function HomeButton({setPage}){
+function HomeButton(){
+    const navigate = useNavigate();
+    const goHome = () => {
+        navigate('/');
+    };
 
     return(
-        <button onClick={() => setPage("home")}>Return</button>
+        <button onClick={goHome}>Return</button>
     );
 }
 export default HomeButton

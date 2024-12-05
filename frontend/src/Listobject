@@ -1,0 +1,9 @@
+import React from 'react';
+
+function ListObject({setPage}){
+
+    return(
+        <button onClick={() => setPage("home")}>Return</button>
+    );
+}
+export default ListObject

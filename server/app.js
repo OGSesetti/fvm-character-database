@@ -13,10 +13,11 @@ const mongoose = require('mongoose');
 const Character = require('../models/characterSchema') //Character isolla
 const port = 3000;
 const { MongoClient } = require("mongodb");
+const cors = require('cors');
 require('dotenv').config();
 
 var adminRights = false;
-
+app.use(cors());
 const password = process.env.password;
 
 
