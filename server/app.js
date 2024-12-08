@@ -11,14 +11,21 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 const Character = require('../models/characterSchema') //Character isolla
-const port = 3000;
+const port = 4000;
 const { MongoClient } = require("mongodb");
-const cors = require('cors');
 require('dotenv').config();
 
 var adminRights = false;
-app.use(cors());
 const password = process.env.password;
+
+
+//requests wont work without this
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); 
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
 
 
 if (Character){
@@ -35,8 +42,12 @@ const guestUri = `mongodb+srv://guest:guest@foodvman.zocy6.mongodb.net/?retryWri
 let db;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'frontend', 'public')));
+app.use(express.static(path.join(__dirname, '../frontend/public')));
 app.use(express.urlencoded({ extended: true }));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public', 'index.html'));
+});
 
 //Server searches for .env file. If one is found, it attempts login as admin
 //API key system would probably also be worth doing
