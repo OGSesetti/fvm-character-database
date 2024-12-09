@@ -17,7 +17,7 @@ require('dotenv').config();
 
 var adminRights = false;
 const password = process.env.password;
-
+const localDirectory = process.env.localDirectory;
 
 //requests wont work without this
 app.use((req, res, next) => {
@@ -42,7 +42,14 @@ const guestUri = `mongodb+srv://guest:guest@foodvman.zocy6.mongodb.net/?retryWri
 let db;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+if (localDirectory){
+    app.use(express.static(path.join(__dirname, '../frontend/build')));
+}
+else{
+    app.use(express.static(path.join('/opt/render/project/src/frontend/build/')));
+}
+
 app.use(express.urlencoded({ extended: true }));
 
 //Server searches for .env file. If one is found, it attempts login as admin
