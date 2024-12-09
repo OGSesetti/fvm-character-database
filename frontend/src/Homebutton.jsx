@@ -1,14 +1,10 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import {usePage} from './PageContext';
 
 function HomeButton(){
-    const navigate = useNavigate();
-    const goHome = () => {
-        navigate('/');
-    };
-
+    const {setPage} = usePage();
     return(
-        <button onClick={goHome}>Return</button>
+        <button onClick={()=>setPage('home')}>Return</button>
     );
 }
-export default HomeButton
+export default HomeButton;

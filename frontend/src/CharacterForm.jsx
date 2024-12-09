@@ -61,8 +61,8 @@ function CharacterForm({ mode, selectedCharacter, setSelectedCharacter, setShowF
                 }
                 const newCharacter = await response.json();
                 setShowForm(false);
-                //await fetchCharacters();
-                setSelectedCharacter(newCharacter);
+                await fetchCharacters();
+                setSelectedCharacter(null);
             } catch (error) {
                 console.error('Error adding character:', error);
             }
@@ -96,7 +96,7 @@ function CharacterForm({ mode, selectedCharacter, setSelectedCharacter, setShowF
 
                 setShowForm(false);
                 
-                //setSelectedCharacter(updatedCharacter);
+                //setSelectedCharacter(updatedCharacter); Ei toimi
                 await fetchCharacters();
 
             } catch (error) {

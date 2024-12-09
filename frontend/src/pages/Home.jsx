@@ -1,29 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import Header from '../Header.jsx'
+import '../styles/Characters.css';
 
-function Home(){
-  const [page, setPage] = useState("home");
-    
+function Home({setPage}){
+
 return (
-    <div>
-    {page === "home" && (
       <div>
-      <Header></Header>
+      <Header />
       <ul>
-        <li>
-        <Link to="/Games" onClick={() => setPage("Games")}>Games</Link>
-        </li>
-        <li>
-        <Link to="/characters" onClick={() => setPage("characters")}>Characters</Link>
-        </li>
-        <li>
-        <Link to="/Factions" onClick={() => setPage("Factions")}>Factions</Link>
-        </li>
-
+        <li onClick={()=>setPage('games')}>Games</li>
+        <li onClick={()=>setPage('characters')}>Characters</li>
+        <li onClick={()=>setPage('factions')}>Factions</li>
       </ul> 
-      </div>
-    )}
 </div>
   );
 }
