@@ -45,10 +45,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 app.use(express.urlencoded({ extended: true }));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/public', 'index.html'));
-});
-
 //Server searches for .env file. If one is found, it attempts login as admin
 //API key system would probably also be worth doing
 async function connectToDatabase() {
@@ -149,7 +145,9 @@ app.delete('/api/character/delete/:id', async (req,res)=>{
     }
 });
 
-
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/', 'index.js'));
+});
 //API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
 
 
