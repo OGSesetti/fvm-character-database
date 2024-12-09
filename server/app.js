@@ -155,11 +155,16 @@ app.delete('/api/character/delete/:id', async (req,res)=>{
     }
 });
 
+/*
+
+Didn't get this to work in Render, so frontend is in a separate service.
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
-//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
 
+
+//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
+*/
 
 
 app.listen(port, () =>{
