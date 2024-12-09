@@ -47,7 +47,7 @@ if (localDirectory){
     app.use(express.static(path.join(__dirname, '../frontend/build')));
 }
 else{
-    app.use(express.static(path.join('/opt/render/project/src/frontend/build/')));
+    app.use(express.static(path.join(__dirname, '/frontend/build')));
 }
 
 app.use(express.urlencoded({ extended: true }));
