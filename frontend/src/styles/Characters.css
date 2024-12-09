@@ -20,6 +20,12 @@
   
   .characterDetail h2 {
     margin-top: 0;
+    margin-bottom: 1%;
+  }
+
+  .detailsPageButtons{
+    margin: 0;
+    padding: 0;
   }
 
   button {

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { ApiProvider } from '../ApiContext';
-import { useApiUrl } from '../ApiContext';
+import React, {useEffect, useState} from 'react';
+import {ApiProvider} from '../ApiContext';
+import {useApiUrl} from '../ApiContext';
 import Header from '../Header.jsx'
 import HomeButton from '../Homebutton.jsx'
 import '../styles/Characters.css';
 import CharacterForm from '../CharacterForm.jsx';
+import CharacterDetails from '../CharacterDetails.jsx';
 
 function Characters() {
     const apiUrl = useApiUrl();
@@ -16,9 +17,9 @@ function Characters() {
     const [showForm, setShowForm] = useState(false);
     const [formMode, setFormMode] = useState('add');
     const mode = selectedCharacter ? 'edit' : 'add';
+    const [selectedCharacterId, setSelectedCharacterId] = useState(null);
 
-
-    const fetchCharacters = async() => {
+    const fetchCharacters = async () => {
         try {
             //console.log('API URL :', apiUrl);
             const response = await fetch(`${apiUrl}getall`); //ei /getall
@@ -60,90 +61,87 @@ function Characters() {
 
     const handleCharacterClick = (character) => {
         setSelectedCharacter(character);
-    };
+        setSelectedCharacterId(character._id)
+    
+};
 
 
-    //Form-related code
-    const handleAddNew = () => {
-        setSelectedCharacter(null);
-        setFormMode('add');
-        setShowForm(true);
-    };
+//Form-related code
+const handleAddNew = () => {
+    setSelectedCharacter(null);
+    setFormMode('add');
+    setShowForm(true);
+};
 
-    const handleEdit = () => {
+const handleEdit = () => {
+    if (selectedCharacter) {
         setFormMode('edit');
         setShowForm(true);
-    };
+    }
+};
 
-    const addCharacterToList = (newCharacter) => {
-        setCharacters((prev) => [...prev, newCharacter]);
-    };
+const addCharacterToList = (newCharacter) => {
+    setCharacters((prev) => [...prev, newCharacter]);
+};
 
-    const handleDelete = async () => {
-        if (!selectedCharacter) return;
+const handleDelete = async (characterId) => {
+    if (window.confirm("Are you sure you want to delete this character?")) {
         try {
-            await fetch(`${apiUrl}delete/${selectedCharacter.id}`, {
-                method: 'DELETE'
+            const response = await fetch(`${apiUrl}delete/${selectedCharacterId}`, {
+                method: 'DELETE',
             });
-            setCharacters((prev) =>
-                prev.filter((character) => character.id !== selectedCharacter.id)
-            )
-            setSelectedCharacter(null);
 
+            if (!response.ok) {
+                throw new Error("Failed to delete character");
+            }
+
+            setCharacters((prevCharacters) =>
+                prevCharacters.filter((character) => character.id !== characterId)
+            );
+            setSelectedCharacter(null);
+            await fetchCharacters();
         } catch (error) {
             console.error("Error deleting character:", error);
         }
-    };
+    }
+};
 
-    return (
-        <div className='characterContainer'>
-            <div className='characterList'>
-                <h1>Characters</h1>
-                <ul>
-                    {characters.map((character) => (
-                        <li key={character._id} onClick={() => handleCharacterClick(character)}>{character.name}</li>
-                    ))}
-                </ul>
-                <div>
-                    <button onClick={handleAddNew}>Add New</button>
-                </div>
+return (
+    <div className='characterContainer'>
+        <div className='characterList'>
+            <h1>Characters</h1>
+            <ul>
+                {characters.map((character) => (
+                    <li key={character._id} onClick={() => handleCharacterClick(character)}>{character.name}</li>
+                ))}
+            </ul>
+            <div>
+                <button onClick={handleAddNew}>Add New</button>
             </div>
-
-            {showForm && (
-                <div className="characterForm">
-                    <CharacterForm 
-                        mode={mode} 
-                        selectedCharacter={selectedCharacter} 
-                        setShowForm={setShowForm} 
-                        setCharacters={setCharacters} 
-                        fetchCharacters={fetchCharacters}
-                        apiUrl={apiUrl}/>
-                </div>
-            )}
-
-            {selectedCharacter && (
-                <div className="characterDetail">
-                    <h2>{selectedCharacter.name}</h2>
-
-                    <h3>Age:</h3>
-                    <p>{selectedCharacter.age}</p>
-
-                    <h3>Nationality:</h3>
-                    <p>{selectedCharacter.nationality}</p>
-
-                    <h3>Allegiance: </h3>
-                    <p>{selectedCharacter.allegiance}</p>
-
-                    <h3>Status:</h3>
-                    <p>{selectedCharacter.status}</p>
-
-                    <h3>Description:</h3>
-                    <p>{selectedCharacter.description}</p>
-
-                </div>
-            )}
         </div>
-    );
+
+        {showForm && (
+            <div className="characterForm">
+                <CharacterForm
+                    mode={formMode}
+                    selectedCharacter={selectedCharacter}
+                    setSelectedCharacter={setSelectedCharacter}
+                    setShowForm={setShowForm}
+                    setCharacters={setCharacters}
+                    fetchCharacters={fetchCharacters}
+                    apiUrl={apiUrl} />
+            </div>
+        )}
+
+        {selectedCharacter && (
+            <CharacterDetails
+                character={selectedCharacter}
+                onEdit={handleEdit}
+                onDelete={() => handleDelete(selectedCharacter._id)}
+            />
+        )}
+    </div>
+);
 }
 
 export default Characters;

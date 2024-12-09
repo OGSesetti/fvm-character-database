@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import './styles/Characters.css';
 
-function CharacterForm({ mode, selectedCharacter, setShowForm, setCharacters, fetchCharacters, apiUrl }) {
+function CharacterForm({ mode, selectedCharacter, setSelectedCharacter, setShowForm, setCharacters, fetchCharacters, apiUrl }) {
     const [formData, setFormData] = useState({
         name: selectedCharacter?.name || "",
         age: selectedCharacter?.age || "",
@@ -12,7 +12,7 @@ function CharacterForm({ mode, selectedCharacter, setShowForm, setCharacters, fe
     });
 
 
-//unknown ei täyty itsestään, koska tietojen täytyy olla valmiiksi määriteltyjä. Korjaa serveripuolella
+    //unknown ei täyty itsestään, koska tietojen täytyy olla valmiiksi määriteltyjä. Korjaa serveripuolella
     useEffect(() => {
         if (mode === 'edit' && selectedCharacter) {
             setFormData({
@@ -59,45 +59,41 @@ function CharacterForm({ mode, selectedCharacter, setShowForm, setCharacters, fe
                     throw new Error('Failed to add character');
                 }
                 const newCharacter = await response.json();
-
-                if (mode === "add") {
                     setCharacters((prevCharacters) => [...prevCharacters, newCharacter]);
-
-                } else {
-                    setCharacters((prevCharacters) =>
-                        prevCharacters.map((char) =>
-                            char.id === newCharacter.id ? newCharacter : char
-                        )
-                    );
-                }
-
                 setShowForm(false);
-
+                await fetchCharacters();
+                setSelectedCharacter(newCharacter);            
             } catch (error) {
                 console.error('Error adding character:', error);
             }
+
         } else if (mode === 'edit') {
             try {
-                const response = await fetch(`${apiUrl}update/${selectedCharacter.id}`, {
+                const response = await fetch(`${apiUrl}update/${selectedCharacter._id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify(finalFormData),
                 });
 
                 if (!response.ok) {
                     throw new Error('Failed to update character');
                 }
-                const newCharacter = await response.json();
-                setCharacters((prevCharacters) => [...prevCharacters, newCharacter]);
+                const updatedCharacter = await response.json();
+                setCharacters((prevCharacters) =>
+                    prevCharacters.map((character) =>
+                        character._id === updatedCharacter._id ? updatedCharacter : character
+                    )
+                );
 
                 setShowForm(false);
+                setSelectedCharacter(updatedCharacter);
             } catch (error) {
                 console.error('Error updating character:', error);
             }
         }
-        fetchCharacters();
+        await fetchCharacters();
     };
 
 

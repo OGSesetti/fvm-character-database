@@ -130,7 +130,7 @@ app.put('/api/character/update/:id', async (req,res)=>{
         if (!selectedCharacter) {
             return res.json({status: "Character was not found in the database"});
     }
-    res.json({status: "Character updated"});
+    res.json({status: "Character updated", character: selectedCharacter});
 } catch (error){
     res.json({error: "Server error:", details: error.message});
     }
