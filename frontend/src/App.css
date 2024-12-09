@@ -36,3 +36,37 @@
     transform: rotate(360deg);
   }
 }
+h2{
+  font-size: 80px;
+}
+
+h3{
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+ul{
+  margin-left: 10px;
+  padding-left: 0px;
+}
+
+li {
+  cursor: pointer;
+  padding-bottom: 10px;
+  list-style-type: none;
+  margin-left: 0px;
+  padding-left: 0px;
+}
+
+li:hover {
+  text-shadow: 0px 0px 15px #ff7300;
+}
+
+body{
+  background-color: black;
+  color: white;
+}
+
+p {
+  margin-top: -10px;
+}
