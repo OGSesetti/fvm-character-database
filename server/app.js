@@ -92,7 +92,7 @@ process.on('SIGINT', async () => {
 app.get('/api/character/getall', async (req,res)=>{
     try{
         const allCharacters = await Character.find().sort({name:1});
-        console.log('All characters:', allCharacters);
+        console.log('Server: Get all successful.');
         res.json(allCharacters);
 }   catch(error) {
         res.json({error: "Server error:", details: error.message});
@@ -107,6 +107,7 @@ app.get('/api/character/:id', async (req,res) =>{
             return res.json({error: "Character not found:", details: error.message});
             }
             res.json(character);
+            console.log('Server: Get by ID successful.');
 }
     catch (error){
         res.json({error: "Server error:", details: error.message});
@@ -119,6 +120,7 @@ app.post('/api/character/add', async (req,res)=>{
         const newCharacter = new Character(req.body);
         await newCharacter.save();
         res.json({status: "New character added", character: newCharacter});
+        console.log('Server: Add successful.');
 }   catch (error){
     console.error("Server error:", error);
     res.json({error: "Server error:", details: error.message});
@@ -132,7 +134,8 @@ app.put('/api/character/update/:id', async (req,res)=>{
         if (!selectedCharacter) {
             return res.json({status: "Character was not found in the database"});
     }
-    res.json({status: "Character updated", character: selectedCharacter});
+    res.json({selectedCharacter});
+    console.log('Server: Update successful.');
 } catch (error){
     res.json({error: "Server error:", details: error.message});
     }
@@ -146,6 +149,7 @@ app.delete('/api/character/delete/:id', async (req,res)=>{
             return res.json({status: "Character was not found in the database"})
         }
         res.json({status: "Character deleted"});
+        console.log('Server: Delete successful.');
     }catch (error){
         res.json({error: "Server error:", error});
     }

@@ -18,7 +18,7 @@ function Characters() {
     const [formMode, setFormMode] = useState('add');
     const mode = selectedCharacter ? 'edit' : 'add';
     const [selectedCharacterId, setSelectedCharacterId] = useState(null);
-
+    
     const fetchCharacters = async () => {
         try {
             //console.log('API URL :', apiUrl);
@@ -29,7 +29,10 @@ function Characters() {
             const data = await response.json();
             setCharacters(data);
             console.log("Characters fetched")
-            setLoading(false);
+            if (selectedCharacterId) {
+                const character = data.find(c => c._id === selectedCharacterId);
+                setSelectedCharacter(character);
+            }
         } catch (error) {
             setError(error.message, '-Characters.jsx');
         } finally {
@@ -61,8 +64,8 @@ function Characters() {
 
     const handleCharacterClick = (character) => {
         setSelectedCharacter(character);
-        setSelectedCharacterId(character._id)
-    
+        setSelectedCharacterId(character._id);
+        console.log('selectedCharacterId: ', selectedCharacterId);
 };
 
 
@@ -87,7 +90,7 @@ const addCharacterToList = (newCharacter) => {
 const handleDelete = async (characterId) => {
     if (window.confirm("Are you sure you want to delete this character?")) {
         try {
-            const response = await fetch(`${apiUrl}delete/${selectedCharacterId}`, {
+            const response = await fetch(`${apiUrl}delete/${selectedCharacter._id}`, {
                 method: 'DELETE',
             });
 

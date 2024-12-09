@@ -46,6 +46,7 @@ function CharacterForm({ mode, selectedCharacter, setSelectedCharacter, setShowF
         };
 
         event.preventDefault();
+        let updatedCharacter = null;
         if (mode === 'add') {
             try {
                 const response = await fetch(`${apiUrl}add`, {
@@ -59,10 +60,9 @@ function CharacterForm({ mode, selectedCharacter, setSelectedCharacter, setShowF
                     throw new Error('Failed to add character');
                 }
                 const newCharacter = await response.json();
-                    setCharacters((prevCharacters) => [...prevCharacters, newCharacter]);
                 setShowForm(false);
-                await fetchCharacters();
-                setSelectedCharacter(newCharacter);            
+                //await fetchCharacters();
+                setSelectedCharacter(newCharacter);
             } catch (error) {
                 console.error('Error adding character:', error);
             }
@@ -80,20 +80,32 @@ function CharacterForm({ mode, selectedCharacter, setSelectedCharacter, setShowF
                 if (!response.ok) {
                     throw new Error('Failed to update character');
                 }
-                const updatedCharacter = await response.json();
-                setCharacters((prevCharacters) =>
-                    prevCharacters.map((character) =>
+
+                updatedCharacter = await response.json();
+                console.log('Updated character: ', updatedCharacter);
+
+                //setSelectedCharacter(updatedCharacter);
+
+                setCharacters((prevCharacters) => {
+                    const updatedList = prevCharacters.map((character) =>
                         character._id === updatedCharacter._id ? updatedCharacter : character
-                    )
-                );
+                    );
+                    console.log('Updated list: ', updatedList)
+                    return updatedList;
+                });
 
                 setShowForm(false);
-                setSelectedCharacter(updatedCharacter);
+                
+                //setSelectedCharacter(updatedCharacter);
+                await fetchCharacters();
+
             } catch (error) {
                 console.error('Error updating character:', error);
+            } finally{
+                await fetchCharacters();
             }
         }
-        await fetchCharacters();
+
     };
 
 
