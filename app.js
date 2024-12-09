@@ -41,6 +41,8 @@ const uri = `mongodb+srv://ses:${password}@foodvman.zocy6.mongodb.net/?retryWrit
 const guestUri = `mongodb+srv://guest:guest@foodvman.zocy6.mongodb.net/?retryWrites=true&w=majority&appName=foodvman`; //read only
 let db;
 
+console.log('Current directory:', __dirname);
+
 app.use(express.json());
 
 
