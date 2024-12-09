@@ -42,7 +42,7 @@ const guestUri = `mongodb+srv://guest:guest@foodvman.zocy6.mongodb.net/?retryWri
 let db;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend/public')));
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 app.use(express.urlencoded({ extended: true }));
 
 //Server searches for .env file. If one is found, it attempts login as admin
@@ -146,7 +146,7 @@ app.delete('/api/character/delete/:id', async (req,res)=>{
 });
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/', 'index.js'));
+    res.sendFile(path.join(__dirname, '../frontend/build/', 'index.js'));
 });
 //API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
 
