@@ -10,14 +10,14 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const Character = require('../models/characterSchema') //Character isolla
+const Character = require('./models/characterSchema') //Character isolla
 const port = 4000;
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
 
 var adminRights = false;
 const password = process.env.password;
-const localDirectory = process.env.localDirectory;
+const localDirectory = process.env.localDirectory; //true or not
 
 //requests wont work without this
 app.use((req, res, next) => {
@@ -43,12 +43,9 @@ let db;
 
 app.use(express.json());
 
-if (localDirectory){
-    app.use(express.static(path.join(__dirname, '../frontend/build')));
-}
-else{
-    app.use(express.static(path.join(__dirname, '/frontend/build')));
-}
+
+app.use(express.static(path.join(__dirname, 'frontend/build')));
+
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -153,7 +150,7 @@ app.delete('/api/character/delete/:id', async (req,res)=>{
 });
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build/', 'index.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
 });
 //API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
 
