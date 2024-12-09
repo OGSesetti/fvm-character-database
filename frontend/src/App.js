@@ -1,4 +1,4 @@
-import React, { Children, useEffect, useState } from 'react';
+import React, {Children, useEffect, useState} from 'react';
 import './App.css';
 import Header from './Header.jsx'
 import HomeButton from './Homebutton.jsx'
