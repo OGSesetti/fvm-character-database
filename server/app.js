@@ -10,7 +10,7 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const Character = require('./models/characterSchema') //Character isolla
+const Character = require('../models/characterSchema') //Character isolla
 const port = 4000;
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
@@ -46,7 +46,7 @@ console.log('Current directory:', __dirname);
 app.use(express.json());
 
 
-app.use(express.static(path.join(__dirname, 'frontend/build')));
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -152,7 +152,7 @@ app.delete('/api/character/delete/:id', async (req,res)=>{
 });
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 //API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
 
