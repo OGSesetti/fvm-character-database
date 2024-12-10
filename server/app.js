@@ -163,7 +163,6 @@ app.get('*', (req, res) => {
 
 
 //API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API//API
-*/
 
 
 app.listen(port, () =>{
