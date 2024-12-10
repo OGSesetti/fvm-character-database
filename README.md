@@ -1,6 +1,8 @@
 ***************************QUICKLY! BEFORE IT BREAKS!***************************
 
 Managed to get the thing hosted after another 5 hours. I'm pretty sure I spend more time fighting with render.com than coding the damn thing.
+For the whole evening backend and frontend took turns breaking, but finally both are working at the same time. (At least at the time when I'm writing this.)
+
 Frontend:
 
 https://foodvman-database.netlify.app/
@@ -11,7 +13,14 @@ Backend: No point opening this. It just calls you dumbass for not having proper 
 https://fvm-character-database-production.up.railway.app/
 
 
+The entire thing is barely holding together by tears and duct-tape. The server code is based on the "this-is-the-one-that-works" -branch, and the front is in "updated-frontend". I am planning to merge everything together at some point, but right now I am too scared.
+
+This has been real challenge and a learning experience. I wouldn't have guessed the actually difficult part is the server hosting.
+
+
+
 ********************************************************************************
+
 
 
 UNREALIABLE STORAGE METHODS OF INFORMATION
