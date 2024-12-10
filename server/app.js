@@ -17,7 +17,6 @@ require('dotenv').config();
 
 var adminRights = false;
 const password = process.env.password;
-const localDirectory = process.env.localDirectory; //true or not
 
 //requests wont work without this
 app.use((req, res, next) => {
@@ -155,11 +154,11 @@ app.delete('/api/character/delete/:id', async (req,res)=>{
     }
 });
 
-/*
 
-Didn't get this to work in Render, so frontend is in a separate service.
+
+
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+    res.json({error: "Server error: enter a valid command dumbass."});
 });
 
 
