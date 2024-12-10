@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {ApiProvider} from '../ApiContext';
+//import {ApiProvider} from '../ApiContext';
 import {useApiUrl} from '../ApiContext';
-import Header from '../Header.jsx'
-import HomeButton from '../Homebutton.jsx'
+//import Header from '../Header.jsx'
+//import HomeButton from '../Homebutton.jsx'
 import '../styles/Characters.css';
 import CharacterForm from '../CharacterForm.jsx';
 import CharacterDetails from '../CharacterDetails.jsx';
@@ -12,11 +12,10 @@ function Characters() {
     const [characters, setCharacters] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState('characters');
+    const [page] = useState('characters');
     const [selectedCharacter, setSelectedCharacter] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [formMode, setFormMode] = useState('add');
-    const mode = selectedCharacter ? 'edit' : 'add';
     const [selectedCharacterId, setSelectedCharacterId] = useState(null);
     
     const fetchCharacters = async () => {
