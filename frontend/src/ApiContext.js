@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, {createContext, useContext} from 'react';
 const ApiContext = createContext();
 
 export function ApiProvider({children}) {
@@ -6,7 +6,7 @@ export function ApiProvider({children}) {
     const localUrl = 'http://localhost:4000/';
     const endPoint = 'api/character/';
     const localHost = process.env.REACT_APP_LOCALHOST || '0';
-    
+
     let baseUrl;
 
     if (localHost === '1') {

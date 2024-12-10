@@ -10,7 +10,7 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const Character = require('../models/characterSchema') //Character isolla
+const Character = require('./characterSchema') //Character isolla
 const port = 4000;
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
