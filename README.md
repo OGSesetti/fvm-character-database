@@ -1,3 +1,19 @@
+***************************QUICKLY! BEFORE IT BREAKS!***************************
+
+Managed to get the thing hosted after another 5 hours. I'm pretty sure I spend more time fighting with render.com than coding the damn thing.
+Frontend:
+
+https://foodvman-database.netlify.app/
+
+
+Backend: No point opening this. It just calls you dumbass for not having proper command. (Developer-only info)
+
+https://fvm-character-database-production.up.railway.app/
+
+
+********************************************************************************
+
+
 UNREALIABLE STORAGE METHODS OF INFORMATION
 
 FOOD V MAN
@@ -7,7 +23,7 @@ THE OFFICIAL DATABASE
 
 This app works as the database for all kinds of information on the games I have been making on my spare time.
 I decided to use React router to split the app into multiple pages. Right now the only page that is operational is the Characters-page, which can be used to read and edit information in the Mongo database.
-
+Had to remove the whole routes thing to get the hosting working properly.
 
 The build that is working right now consists of
  Characters -page,
